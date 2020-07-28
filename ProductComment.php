@@ -277,14 +277,14 @@ class ProductComment extends ObjectModel
      *
      * @return array Comments
      */
-    public static function getByValidate($validate = '0', $deleted = false)
+    public static function getByValidate($validate = '0', $deleted = false, $id_shop = null)
     {
         $sql = '
 			SELECT pc.`id_product_comment`, pc.`id_product`, IF(c.id_customer, CONCAT(c.`firstname`, \' \',  c.`lastname`), pc.customer_name) customer_name, pc.`title`, pc.`content`, pc.`grade`, pc.`date_add`, pl.`name`
 			FROM `' . _DB_PREFIX_ . 'product_comment` pc
 			LEFT JOIN `' . _DB_PREFIX_ . 'customer` c ON (c.`id_customer` = pc.`id_customer`)
 			LEFT JOIN `' . _DB_PREFIX_ . 'product_lang` pl ON (pl.`id_product` = pc.`id_product` AND pl.`id_lang` = ' . (int) Context::getContext()->language->id . Shop::addSqlRestrictionOnLang('pl') . ')
-			WHERE pc.`validate` = ' . (int) $validate;
+			WHERE pc.`validate` = ' . (int) $validate . ($id_shop ? ' AND c.`id_shop` = ' . (int) $id_shop : '');
 
         $sql .= ' ORDER BY pc.`date_add` DESC';
 
